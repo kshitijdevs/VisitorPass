@@ -1,0 +1,459 @@
+/* =========================================
+   VISITORS
+========================================= */
+
+.visitors-page {
+    width: 100%;
+    max-width: 1400px;
+
+    margin: 0 auto;
+
+    padding: 36px 40px 60px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================
+   REGISTRATION
+========================================= */
+
+.visitor-form-card {
+    width: 100%;
+
+    padding: 26px;
+
+    margin-bottom: 24px;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 1px 2px rgba(15, 23, 42, 0.04);
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================
+   LIST
+========================================= */
+
+.visitor-list-card {
+    width: 100%;
+
+    padding: 26px;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 1px 2px rgba(15, 23, 42, 0.04);
+
+    box-sizing: border-box;
+}
+
+.visitor-list-header {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 16px;
+
+    margin-bottom: 20px;
+}
+
+.visitor-list-header > * {
+    min-width: 0;
+}
+
+
+/* =========================================
+   SEARCH
+========================================= */
+
+.visitor-search {
+    position: relative;
+
+    width: 100%;
+
+    margin-bottom: 20px;
+}
+
+.visitor-search input {
+    width: 100%;
+
+    height: 44px;
+
+    padding: 10px 14px 10px 40px;
+
+    box-sizing: border-box;
+
+    border: 1px solid var(--border);
+
+    border-radius: 8px;
+
+    outline: none;
+
+    background: #ffffff;
+
+    color: var(--text);
+
+    font-size: 13px;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.visitor-search input::placeholder {
+    color: #94a3b8;
+}
+
+.visitor-search input:focus {
+    border-color: var(--primary);
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.10);
+}
+
+.search-icon {
+    position: absolute;
+
+    left: 14px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    color: #64748b;
+
+    font-size: 18px;
+
+    pointer-events: none;
+}
+
+
+/* =========================================
+   TABLE
+========================================= */
+
+.visitor-table-wrapper {
+    width: 100%;
+
+    overflow-x: auto;
+
+    -webkit-overflow-scrolling: touch;
+
+    border: 1px solid var(--border);
+
+    border-radius: 9px;
+
+    box-sizing: border-box;
+}
+
+.visitor-table {
+    width: 100%;
+
+    min-width: 800px;
+
+    border-collapse: collapse;
+
+    font-size: 13px;
+}
+
+.visitor-table th {
+    padding: 13px 14px;
+
+    background: #f8fafc;
+
+    color: var(--text-muted);
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    text-align: left;
+
+    text-transform: uppercase;
+
+    white-space: nowrap;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.visitor-table td {
+    padding: 14px;
+
+    border-bottom: 1px solid var(--border);
+
+    color: #475569;
+
+    vertical-align: middle;
+}
+
+.visitor-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.visitor-table tbody tr {
+    transition: background 0.15s ease;
+}
+
+.visitor-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+
+/* =========================================
+   EMPTY
+========================================= */
+
+.visitor-empty {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    min-height: 220px;
+
+    padding: 30px 20px;
+
+    box-sizing: border-box;
+
+    text-align: center;
+}
+
+.visitor-empty .empty-icon {
+    margin-bottom: 10px;
+
+    font-size: 28px;
+}
+
+.visitor-empty strong {
+    font-size: 14px;
+}
+
+.visitor-empty p {
+    max-width: 320px;
+
+    margin: 5px 0 0;
+
+    color: var(--text-muted);
+
+    font-size: 12px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================
+   SUBMIT BUTTON
+========================================= */
+
+.visitor-submit-btn {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-width: 170px;
+
+    min-height: 44px;
+
+    padding: 12px 22px;
+
+    box-sizing: border-box;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background: #2563eb;
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.visitor-submit-btn:hover {
+    background: #1d4ed8;
+
+    box-shadow:
+        0 6px 14px rgba(37, 99, 235, 0.22);
+
+    transform: translateY(-1px);
+}
+
+.visitor-submit-btn:active {
+    transform: translateY(0);
+}
+
+.visitor-submit-btn:disabled {
+    opacity: 0.6;
+
+    cursor: not-allowed;
+
+    transform: none;
+
+    box-shadow: none;
+}
+
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 900px) {
+
+    .visitors-page {
+        padding: 30px 26px 50px;
+    }
+
+    .visitor-form-card,
+    .visitor-list-card {
+        padding: 22px;
+    }
+
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+
+    .visitors-page {
+        padding: 22px 15px 40px;
+    }
+
+
+    /* Cards */
+
+    .visitor-form-card,
+    .visitor-list-card {
+        padding: 17px;
+
+        border-radius: 10px;
+    }
+
+
+    /* Header */
+
+    .visitor-list-header {
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        gap: 10px;
+
+        margin-bottom: 16px;
+    }
+
+
+    /* Search */
+
+    .visitor-search {
+        margin-bottom: 16px;
+    }
+
+    .visitor-search input {
+        height: 44px;
+
+        font-size: 14px;
+    }
+
+
+    /* Table */
+
+    .visitor-table-wrapper {
+        margin: 0;
+
+        border-radius: 7px;
+    }
+
+    .visitor-table {
+        min-width: 800px;
+    }
+
+
+    /* Empty */
+
+    .visitor-empty {
+        min-height: 190px;
+
+        padding: 25px 15px;
+    }
+
+
+    /* Button */
+
+    .visitor-submit-btn {
+        width: 100%;
+
+        min-width: 0;
+
+        min-height: 46px;
+    }
+
+}
+
+
+/* =========================================
+   SMALL PHONES
+========================================= */
+
+@media (max-width: 380px) {
+
+    .visitors-page {
+        padding: 18px 11px 35px;
+    }
+
+    .visitor-form-card,
+    .visitor-list-card {
+        padding: 14px;
+    }
+
+    .visitor-search input {
+        height: 42px;
+
+        padding-left: 38px;
+
+        font-size: 13px;
+    }
+
+    .search-icon {
+        left: 12px;
+
+        font-size: 16px;
+    }
+
+    .visitor-empty {
+        min-height: 170px;
+    }
+
+    .visitor-submit-btn {
+        min-height: 44px;
+
+        font-size: 13px;
+    }
+
+}

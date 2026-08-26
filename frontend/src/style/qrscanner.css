@@ -1,0 +1,842 @@
+/* =====================================================
+   QR SCANNER PAGE
+===================================================== */
+
+.qr-page {
+    width: 100%;
+    max-width: 1180px;
+
+    margin: 0 auto;
+
+    padding: 42px 36px 70px;
+
+    box-sizing: border-box;
+}
+
+.qr-header {
+    margin-bottom: 28px;
+}
+
+.qr-eyebrow {
+    color: #2563eb;
+
+    font-size: 12px;
+    font-weight: 800;
+
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+
+    margin-bottom: 7px;
+}
+
+.qr-header h1 {
+    margin: 0;
+
+    color: #0f172a;
+
+    font-size: 34px;
+    font-weight: 750;
+}
+
+.qr-header p {
+    margin: 8px 0 0;
+
+    color: #64748b;
+
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+
+/* =====================================================
+   LAYOUT
+===================================================== */
+
+.qr-layout {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1.35fr)
+        minmax(320px, 0.65fr);
+
+    gap: 24px;
+
+    align-items: start;
+
+    width: 100%;
+}
+
+
+/* =====================================================
+   CARDS
+===================================================== */
+
+.qr-scanner-card,
+.visitor-info-card {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    background: #ffffff;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 8px 25px rgba(15, 23, 42, 0.05);
+}
+
+.qr-scanner-card {
+    padding: 26px;
+
+    min-width: 0;
+}
+
+.visitor-info-card {
+    padding: 26px;
+
+    min-height: 430px;
+
+    min-width: 0;
+}
+
+
+/* =====================================================
+   CARD HEADER
+===================================================== */
+
+.qr-card-header,
+.visitor-info-header {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: flex-start;
+
+    gap: 15px;
+
+    padding-bottom: 20px;
+
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.qr-card-header > div,
+.visitor-info-header > div {
+    min-width: 0;
+}
+
+.qr-card-header h2,
+.visitor-info-header h2 {
+    margin: 0;
+
+    color: #0f172a;
+
+    font-size: 21px;
+}
+
+.qr-card-header p {
+    margin: 6px 0 0;
+
+    color: #64748b;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+}
+
+.qr-status {
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    flex-shrink: 0;
+
+    padding: 7px 11px;
+
+    border-radius: 999px;
+
+    background: #ecfdf5;
+
+    color: #047857;
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
+
+.qr-status span {
+    width: 7px;
+    height: 7px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #10b981;
+}
+
+
+/* =====================================================
+   ACTION BUTTONS
+===================================================== */
+
+.qr-action-label {
+    margin-top: 22px;
+    margin-bottom: 9px;
+
+    color: #334155;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.qr-actions {
+    display: flex;
+
+    gap: 10px;
+
+    margin-bottom: 22px;
+}
+
+.qr-action-btn {
+    appearance: none;
+
+    border: 1px solid #dbe3ef;
+
+    background: #ffffff;
+
+    color: #334155;
+
+    border-radius: 9px;
+
+    padding: 11px 18px;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.qr-action-btn:hover {
+    border-color: #2563eb;
+
+    color: #2563eb;
+
+    background: #eff6ff;
+}
+
+.qr-action-btn.selected {
+    border-color: #2563eb;
+
+    background: #2563eb;
+
+    color: #ffffff;
+
+    box-shadow:
+        0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+
+/* =====================================================
+   CAMERA CONTAINER
+===================================================== */
+
+.qr-camera-wrapper {
+    width: 100%;
+    max-width: 620px;
+
+    min-height: 360px;
+
+    margin: 0 auto;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background: #0f172a;
+
+    border: 1px solid #cbd5e1;
+
+    border-radius: 14px;
+
+    overflow: hidden;
+
+    position: relative;
+
+    box-sizing: border-box;
+}
+
+
+/* =====================================================
+   HTML5 QR CODE
+===================================================== */
+
+#qr-reader {
+    width: 100% !important;
+
+    max-width: 620px !important;
+
+    min-height: 360px !important;
+
+    border: 0 !important;
+
+    padding: 0 !important;
+
+    margin: 0 !important;
+
+    background: #0f172a !important;
+
+    box-sizing: border-box !important;
+}
+
+
+/* Scan region */
+
+#qr-reader__scan_region {
+    width: 100% !important;
+
+    min-height: 360px !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+
+    justify-content: center !important;
+
+    border: 0 !important;
+
+    padding: 0 !important;
+
+    margin: 0 !important;
+
+    background: #0f172a !important;
+
+    box-sizing: border-box !important;
+}
+
+
+/* Camera video */
+
+#qr-reader video {
+    width: 100% !important;
+
+    height: 360px !important;
+
+    display: block !important;
+
+    object-fit: cover !important;
+
+    border: 0 !important;
+
+    border-radius: 14px !important;
+}
+
+
+/* Canvas */
+
+#qr-reader canvas {
+    max-width: 100% !important;
+}
+
+
+/* =====================================================
+   QR FRAME
+===================================================== */
+
+#qr-reader__scan_region > img {
+    display: none !important;
+}
+
+
+/* =====================================================
+   HIDE LIBRARY CONTROLS
+===================================================== */
+
+#qr-reader__dashboard {
+    display: none !important;
+}
+
+#qr-reader__dashboard_section {
+    display: none !important;
+}
+
+#qr-reader__dashboard_section_csr {
+    display: none !important;
+}
+
+#qr-reader__dashboard_section_swaplink {
+    display: none !important;
+}
+
+#qr-reader img[alt="Info icon"] {
+    display: none !important;
+}
+
+
+/* =====================================================
+   HELP TEXT
+===================================================== */
+
+.qr-help {
+    margin: 12px 0 0;
+
+    text-align: center;
+
+    color: #64748b;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+}
+
+
+/* =====================================================
+   ALERTS
+===================================================== */
+
+.qr-alert {
+    margin-top: 18px;
+
+    padding: 12px 15px;
+
+    border-radius: 9px;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    line-height: 1.5;
+}
+
+.qr-alert.success {
+    background: #ecfdf5;
+
+    border: 1px solid #a7f3d0;
+
+    color: #047857;
+}
+
+.qr-alert.danger {
+    background: #fef2f2;
+
+    border: 1px solid #fecaca;
+
+    color: #b91c1c;
+}
+
+
+/* =====================================================
+   EMPTY VISITOR STATE
+===================================================== */
+
+.visitor-empty {
+    min-height: 350px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+}
+
+.visitor-empty-icon {
+    width: 56px;
+    height: 56px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #eff6ff;
+
+    color: #2563eb;
+
+    font-size: 24px;
+    font-weight: 800;
+
+    margin-bottom: 16px;
+}
+
+.visitor-empty h3 {
+    margin: 0;
+
+    color: #0f172a;
+
+    font-size: 18px;
+}
+
+.visitor-empty p {
+    max-width: 260px;
+
+    margin: 8px 0 0;
+
+    color: #64748b;
+
+    font-size: 14px;
+
+    line-height: 1.6;
+}
+
+
+/* =====================================================
+   VISITOR DETAILS
+===================================================== */
+
+.visitor-details {
+    padding-top: 28px;
+
+    text-align: center;
+}
+
+.visitor-photo,
+.visitor-photo-placeholder {
+    width: 100px;
+    height: 100px;
+
+    margin: 0 auto 14px;
+
+    border-radius: 50%;
+}
+
+.visitor-photo {
+    display: block;
+
+    object-fit: cover;
+
+    border: 4px solid #eff6ff;
+}
+
+.visitor-photo-placeholder {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background: #dbeafe;
+
+    color: #2563eb;
+
+    font-size: 32px;
+
+    font-weight: 800;
+}
+
+.visitor-details h3 {
+    margin: 0;
+
+    color: #0f172a;
+
+    font-size: 21px;
+
+    overflow-wrap: anywhere;
+}
+
+.verified-badge {
+    display: inline-block;
+
+    margin-top: 8px;
+
+    padding: 5px 10px;
+
+    border-radius: 999px;
+
+    background: #ecfdf5;
+
+    color: #047857;
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
+
+
+/* =====================================================
+   VISITOR FIELDS
+===================================================== */
+
+.visitor-fields {
+    margin-top: 24px;
+
+    text-align: left;
+}
+
+.visitor-fields div {
+    padding: 13px 0;
+
+    border-bottom: 1px solid #e2e8f0;
+
+    min-width: 0;
+}
+
+.visitor-fields div:last-child {
+    border-bottom: 0;
+}
+
+.visitor-fields span {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #94a3b8;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.6px;
+}
+
+.visitor-fields strong {
+    color: #334155;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    word-break: break-word;
+}
+
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width: 1000px) {
+
+    .qr-page {
+        padding: 32px 28px 55px;
+    }
+
+    .qr-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .visitor-info-card {
+        min-height: auto;
+    }
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 600px) {
+
+    .qr-page {
+        width: 100%;
+
+        padding: 22px 14px 40px;
+    }
+
+
+    /* Header */
+
+    .qr-header {
+        margin-bottom: 20px;
+    }
+
+    .qr-header h1 {
+        font-size: 28px;
+
+        line-height: 1.15;
+    }
+
+    .qr-header p {
+        font-size: 14px;
+
+        line-height: 1.55;
+    }
+
+
+    /* Cards */
+
+    .qr-scanner-card,
+    .visitor-info-card {
+        padding: 17px;
+
+        border-radius: 13px;
+    }
+
+
+    /* Header */
+
+    .qr-card-header,
+    .visitor-info-header {
+        flex-direction: column;
+
+        gap: 12px;
+    }
+
+    .qr-card-header h2,
+    .visitor-info-header h2 {
+        font-size: 19px;
+    }
+
+    .qr-card-header p {
+        font-size: 13px;
+    }
+
+    .qr-status {
+        align-self: flex-start;
+    }
+
+
+    /* Action buttons */
+
+    .qr-actions {
+        width: 100%;
+
+        flex-direction: column;
+
+        gap: 9px;
+
+        margin-bottom: 18px;
+    }
+
+    .qr-action-btn {
+        width: 100%;
+
+        min-height: 44px;
+
+        box-sizing: border-box;
+    }
+
+
+    /* Camera */
+
+    .qr-camera-wrapper {
+        width: 100%;
+
+        max-width: 100%;
+
+        min-height: 0;
+
+        aspect-ratio: 1 / 1;
+
+        border-radius: 12px;
+    }
+
+    #qr-reader {
+        width: 100% !important;
+
+        min-height: 0 !important;
+
+        height: 100% !important;
+    }
+
+    #qr-reader__scan_region {
+        width: 100% !important;
+
+        min-height: 0 !important;
+
+        height: 100% !important;
+    }
+
+    #qr-reader video {
+        width: 100% !important;
+
+        height: 100% !important;
+
+        min-height: 0 !important;
+
+        object-fit: cover !important;
+
+        border-radius: 12px !important;
+    }
+
+
+    /* Help */
+
+    .qr-help {
+        font-size: 12px;
+
+        line-height: 1.5;
+    }
+
+
+    /* Visitor */
+
+    .visitor-empty {
+        min-height: 280px;
+    }
+
+    .visitor-details {
+        padding-top: 22px;
+    }
+
+    .visitor-photo,
+    .visitor-photo-placeholder {
+        width: 85px;
+        height: 85px;
+    }
+
+    .visitor-details h3 {
+        font-size: 19px;
+    }
+
+    .visitor-fields {
+        margin-top: 18px;
+    }
+
+    .visitor-fields div {
+        padding: 11px 0;
+    }
+
+}
+
+
+/* =====================================================
+   SMALL PHONES
+===================================================== */
+
+@media (max-width: 380px) {
+
+    .qr-page {
+        padding: 18px 11px 35px;
+    }
+
+    .qr-scanner-card,
+    .visitor-info-card {
+        padding: 14px;
+    }
+
+    .qr-header h1 {
+        font-size: 25px;
+    }
+
+    .qr-header p {
+        font-size: 13px;
+    }
+
+    .qr-action-btn {
+        min-height: 42px;
+
+        padding: 10px 14px;
+
+        font-size: 13px;
+    }
+
+    .qr-camera-wrapper {
+        border-radius: 10px;
+    }
+
+    #qr-reader video {
+        border-radius: 10px !important;
+    }
+
+}
