@@ -16,7 +16,7 @@ function Appointments() {
             const token = localStorage.getItem("token");
 
             const response = await fetch(
-                "http://localhost:5000/api/appointments",
+                "https://visitorpass-backend.onrender.com/api/appointments",
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -39,7 +39,7 @@ function Appointments() {
             const token = localStorage.getItem("token");
 
             const response = await fetch(
-                "http://localhost:5000/api/visitors",
+                "https://visitorpass-backend.onrender.com/api/visitors",
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -63,62 +63,62 @@ function Appointments() {
     }, []);
 
     const handleSubmit = async (e) => {
-    e.preventDefault();
+        e.preventDefault();
 
-    const token = localStorage.getItem("token");
+        const token = localStorage.getItem("token");
 
-    // Find the selected visitor
-    const selectedVisitor = visitors.find(
-        (item) =>
-            item.name?.toLowerCase() === visitor?.toLowerCase()
-    );
+        // Find the selected visitor
+        const selectedVisitor = visitors.find(
+            (item) =>
+                item.name?.toLowerCase() === visitor?.toLowerCase()
+        );
 
-    if (!selectedVisitor) {
-        alert("Please select a valid visitor");
-        return;
-    }
-
-    const response = await fetch(
-        "http://localhost:5000/api/appointments",
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                visitor: selectedVisitor.name,
-                visitorEmail: selectedVisitor.email,
-                host,
-                date,
-                time,
-                purpose
-            })
+        if (!selectedVisitor) {
+            alert("Please select a valid visitor");
+            return;
         }
-    );
 
-    const data = await response.json();
+        const response = await fetch(
+            "https://visitorpass-backend.onrender.com/api/appointments",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    visitor: selectedVisitor.name,
+                    visitorEmail: selectedVisitor.email,
+                    host,
+                    date,
+                    time,
+                    purpose
+                })
+            }
+        );
 
-    if (response.ok) {
-        alert("Appointment created successfully!");
+        const data = await response.json();
 
-        setVisitor("");
-        setHost("");
-        setDate("");
-        setTime("");
-        setPurpose("");
+        if (response.ok) {
+            alert("Appointment created successfully!");
 
-        fetchAppointments();
-    } else {
-        alert(data.message || "Something went wrong");
-    }
-};
+            setVisitor("");
+            setHost("");
+            setDate("");
+            setTime("");
+            setPurpose("");
+
+            fetchAppointments();
+        } else {
+            alert(data.message || "Something went wrong");
+        }
+    };
 
     const updateStatus = async (id, status) => {
         const token = localStorage.getItem("token");
 
         const response = await fetch(
-            `http://localhost:5000/api/appointments/${id}/status`,
+            `https://visitorpass-backend.onrender.com/api/appointments/${id}/status`,
             {
                 method: "PATCH",
                 headers: {
@@ -409,7 +409,7 @@ function Appointments() {
                                                     {visitorData?.photo ? (
 
                                                         <img
-                                                            src={`http://localhost:5000${visitorData.photo}`}
+                                                            src={`https://visitorpass-backend.onrender.com${visitorData.photo}`}
                                                             alt={
                                                                 appointment.visitor
                                                             }
@@ -470,12 +470,12 @@ function Appointments() {
 
                                                 <span
                                                     className={`appointment-status ${appointment.status ===
-                                                            "approved"
-                                                            ? "approved"
-                                                            : appointment.status ===
-                                                                "rejected"
-                                                                ? "rejected"
-                                                                : "pending"
+                                                        "approved"
+                                                        ? "approved"
+                                                        : appointment.status ===
+                                                            "rejected"
+                                                            ? "rejected"
+                                                            : "pending"
                                                         }`}
                                                 >
                                                     {appointment.status}

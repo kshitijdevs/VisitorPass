@@ -58,7 +58,7 @@ function Dashboard() {
                     localStorage.getItem("token");
 
                 const response = await fetch(
-                    "http://localhost:5000/api/dashboard",
+                    "https://visitorpass-backend.onrender.com/api/dashboard",
                     {
                         headers: {
                             Authorization:
@@ -760,7 +760,7 @@ function Dashboard() {
                                                         {visitor.photo ? (
 
                                                             <img
-                                                                src={`http://localhost:5000${visitor.photo}`}
+                                                                src={`https://visitorpass-backend.onrender.com${visitor.photo}`}
                                                                 alt={visitor.name}
                                                             />
 

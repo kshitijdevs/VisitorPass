@@ -17,7 +17,7 @@ function Visitors() {
             const token = localStorage.getItem("token");
 
             const response = await fetch(
-                "http://localhost:5000/api/visitors",
+                "https://visitorpass-backend.onrender.com/api/visitors",
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -58,7 +58,7 @@ function Visitors() {
 
         try {
             const response = await fetch(
-                "http://localhost:5000/api/visitors",
+                "https://visitorpass-backend.onrender.com/api/visitors",
                 {
                     method: "POST",
                     headers: {
@@ -393,7 +393,7 @@ function Visitors() {
                                                 {visitor.photo ? (
 
                                                     <img
-                                                        src={`http://localhost:5000${visitor.photo}`}
+                                                        src={`https://visitorpass-backend.onrender.com${visitor.photo}`}
                                                         alt={visitor.name}
                                                     />
 

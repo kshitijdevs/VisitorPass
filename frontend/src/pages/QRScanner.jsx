@@ -133,7 +133,7 @@ function QRScanner() {
 
                             const visitorResponse =
                                 await fetch(
-                                    "http://localhost:5000/api/visitors",
+                                    "https://visitorpass-backend.onrender.com/api/visitors",
                                     {
                                         headers: {
                                             Authorization:
@@ -241,7 +241,7 @@ function QRScanner() {
 
                             const checkResponse =
                                 await fetch(
-                                    "http://localhost:5000/api/checklogs",
+                                    "https://visitorpass-backend.onrender.com/api/checklogs",
                                     {
                                         method: "POST",
 
@@ -357,11 +357,11 @@ function QRScanner() {
 
                     try {
                         await scanner.stop();
-                    } catch {}
+                    } catch { }
 
                     try {
                         scanner.clear();
-                    } catch {}
+                    } catch { }
 
                     return;
                 }
@@ -419,12 +419,12 @@ function QRScanner() {
 
                 currentScanner
                     .stop()
-                    .catch(() => {})
+                    .catch(() => { })
                     .finally(() => {
 
                         try {
                             currentScanner.clear();
-                        } catch {}
+                        } catch { }
 
                         const reader =
                             document.getElementById(
@@ -563,11 +563,10 @@ function QRScanner() {
                         <button
                             type="button"
                             className={
-                                `qr-action-btn ${
-                                    action ===
+                                `qr-action-btn ${action ===
                                     "check-in"
-                                        ? "selected"
-                                        : ""
+                                    ? "selected"
+                                    : ""
                                 }`
                             }
                             onClick={
@@ -581,11 +580,10 @@ function QRScanner() {
                         <button
                             type="button"
                             className={
-                                `qr-action-btn ${
-                                    action ===
+                                `qr-action-btn ${action ===
                                     "check-out"
-                                        ? "selected"
-                                        : ""
+                                    ? "selected"
+                                    : ""
                                 }`
                             }
                             onClick={
@@ -690,7 +688,7 @@ function QRScanner() {
 
                                 <img
                                     src={
-                                        `http://localhost:5000${visitorInfo.photo}`
+                                        `https://visitorpass-backend.onrender.com${visitorInfo.photo}`
                                     }
                                     alt={
                                         visitorInfo.name

@@ -11,7 +11,7 @@ function Passes() {
             const token = localStorage.getItem("token");
 
             const response = await fetch(
-                "http://localhost:5000/api/appointments",
+                "https://visitorpass-backend.onrender.com/api/appointments",
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -56,7 +56,7 @@ function Passes() {
         }
 
         const response = await fetch(
-            "http://localhost:5000/api/passes",
+            "https://visitorpass-backend.onrender.com/api/passes",
             {
                 method: "POST",
                 headers: {
@@ -119,7 +119,7 @@ function Passes() {
             const token = localStorage.getItem("token");
 
             const response = await fetch(
-                "http://localhost:5000/api/pdf",
+                "https://visitorpass-backend.onrender.com/api/pdf",
                 {
                     method: "POST",
                     headers: {
@@ -262,7 +262,7 @@ function Passes() {
 
                                 const form =
                                     passForms[
-                                        appointment._id
+                                    appointment._id
                                     ] || {};
 
                                 return (

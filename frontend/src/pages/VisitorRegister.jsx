@@ -43,7 +43,7 @@ function VisitorRegister() {
             }
 
             const response = await fetch(
-                "http://localhost:5000/api/visitor-register",
+                "https://visitorpass-backend.onrender.com/api/visitor-register",
                 {
                     method: "POST",
                     body: formData
@@ -81,7 +81,7 @@ function VisitorRegister() {
             } else {
                 setMessage(
                     data.message ||
-                        "Registration failed"
+                    "Registration failed"
                 );
             }
 

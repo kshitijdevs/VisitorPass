@@ -37,7 +37,7 @@ function Reports() {
 
             const dashboardResponse =
                 await fetch(
-                    "http://localhost:5000/api/dashboard",
+                    "https://visitorpass-backend.onrender.com/api/dashboard",
                     {
                         headers: {
                             Authorization:
@@ -60,7 +60,7 @@ function Reports() {
 
             const visitorsResponse =
                 await fetch(
-                    "http://localhost:5000/api/visitors",
+                    "https://visitorpass-backend.onrender.com/api/visitors",
                     {
                         headers: {
                             Authorization:
@@ -83,7 +83,7 @@ function Reports() {
 
             const logsResponse =
                 await fetch(
-                    "http://localhost:5000/api/checklogs",
+                    "https://visitorpass-backend.onrender.com/api/checklogs",
                     {
                         headers: {
                             Authorization:
@@ -185,13 +185,13 @@ function Reports() {
             const matchesCompany =
                 companyFilter === "all" ||
                 visitor.company ===
-                    companyFilter;
+                companyFilter;
 
 
             const matchesPurpose =
                 purposeFilter === "all" ||
                 visitor.purpose ===
-                    purposeFilter;
+                purposeFilter;
 
 
             return (
@@ -223,7 +223,7 @@ function Reports() {
 
         if (
             !latestLogsByPass[
-                log.passNumber
+            log.passNumber
             ]
         ) {
             latestLogsByPass[
@@ -1283,7 +1283,7 @@ function Reports() {
 
                                                     <img
                                                         src={
-                                                            `http://localhost:5000${visitor.photo}`
+                                                            `https://visitorpass-backend.onrender.com${visitor.photo}`
                                                         }
                                                         alt={
                                                             visitor.name
