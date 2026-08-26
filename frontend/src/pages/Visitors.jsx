@@ -1,4 +1,4 @@
-import "../style/visitors.css";
+import "../style/Visitors.css";
 import { useEffect, useState } from "react";
 
 function Visitors() {
