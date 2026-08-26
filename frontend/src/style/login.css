@@ -353,3 +353,9 @@
     }
 
 }
+
+.login-error {
+    color: #dc2626;
+    margin-bottom: 15px;
+    font-size: 14px;
+}

@@ -5,31 +5,45 @@ import { useNavigate } from "react-router-dom";
 function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
 
-        const response = await fetch(
-            "https://visitorpass-backend.onrender.com/api/users/login",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    email,
-                    password
-                })
+        setLoading(true);
+        setError("");
+
+        try {
+            const response = await fetch(
+                "https://visitorpass-backend.onrender.com/api/users/login",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        email,
+                        password
+                    })
+                }
+            );
+
+            const data = await response.json();
+
+            if (response.ok) {
+                localStorage.setItem("token", data.token);
+                navigate("/dashboard");
+            } else {
+                setError(data.message || "Invalid email or password");
             }
-        );
 
-        const data = await response.json();
-
-        if (response.ok) {
-            localStorage.setItem("token", data.token);
-            navigate("/dashboard");
+        } catch (error) {
+            setError("Server error. Please try again.");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -38,7 +52,6 @@ function Login() {
 
             <div className="login-container">
 
-                {/* Brand */}
                 <div className="login-brand">
                     <h1>VisitorPass</h1>
 
@@ -47,7 +60,6 @@ function Login() {
                     </p>
                 </div>
 
-                {/* Login Card */}
                 <div className="login-card">
 
                     <h2>Staff Login</h2>
@@ -58,7 +70,6 @@ function Login() {
 
                     <form onSubmit={handleLogin}>
 
-                        {/* Email */}
                         <div className="login-form-group">
 
                             <label htmlFor="email">
@@ -79,7 +90,6 @@ function Login() {
 
                         </div>
 
-                        {/* Password */}
                         <div className="login-form-group">
 
                             <label htmlFor="password">
@@ -100,12 +110,19 @@ function Login() {
 
                         </div>
 
-                        {/* Login Button */}
+                        {/* Error Message */}
+                        {error && (
+                            <p className="login-error">
+                                ❌ {error}
+                            </p>
+                        )}
+
                         <button
                             className="login-button"
                             type="submit"
+                            disabled={loading}
                         >
-                            Sign In
+                            {loading ? "Signing in..." : "Sign In"}
                         </button>
 
                     </form>
