@@ -1,5 +1,6 @@
 import "../style/visitor-register.css";
 import { useState } from "react";
+import { apiUrl } from "../config/api";
 
 function VisitorRegister() {
     const [form, setForm] = useState({
@@ -43,7 +44,7 @@ function VisitorRegister() {
             }
 
             const response = await fetch(
-                "https://visitorpass-backend.onrender.com/api/visitor-register",
+                apiUrl("/api/visitor-register"),
                 {
                     method: "POST",
                     body: formData

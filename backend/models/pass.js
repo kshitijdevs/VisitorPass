@@ -16,6 +16,14 @@ const passSchema = new mongoose.Schema({
         required: true
     },
 
+    appointmentId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Appointment",
+        required: true,
+        unique: true,
+        sparse: true
+    },
+
     host: {
         type: String,
         default: ""

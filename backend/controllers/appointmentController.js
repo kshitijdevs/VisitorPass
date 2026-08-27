@@ -20,7 +20,11 @@ const createAppointment = async (req, res) => {
 const getAppointments = async (req, res) => {
     try {
 
-        const appointments = await Appointment.find()
+        const filter = req.user.role === "security"
+            ? { status: "approved" }
+            : {};
+
+        const appointments = await Appointment.find(filter)
             .sort({ _id: -1 });
 
         res.json(appointments);

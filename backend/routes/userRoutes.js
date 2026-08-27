@@ -4,10 +4,12 @@ const {
     createUser,
     loginUser
 } = require("../controllers/userController");
+const protect = require("../middleware/authMiddleware");
+const authorize = require("../middleware/roleMiddleware");
 
 const router = express.Router();
 
-router.post("/", createUser);
+router.post("/", protect, authorize("admin"), createUser);
 
 router.post("/login", loginUser);
 

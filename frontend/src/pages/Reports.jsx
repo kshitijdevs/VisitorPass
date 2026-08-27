@@ -1,5 +1,6 @@
 import "../style/reports.css";
 import { useEffect, useState } from "react";
+import { API_BASE_URL, apiUrl } from "../config/api";
 
 function Reports() {
     const [stats, setStats] = useState({
@@ -37,7 +38,7 @@ function Reports() {
 
             const dashboardResponse =
                 await fetch(
-                    "https://visitorpass-backend.onrender.com/api/dashboard",
+                    apiUrl("/api/dashboard"),
                     {
                         headers: {
                             Authorization:
@@ -60,7 +61,7 @@ function Reports() {
 
             const visitorsResponse =
                 await fetch(
-                    "https://visitorpass-backend.onrender.com/api/visitors",
+                    apiUrl("/api/visitors"),
                     {
                         headers: {
                             Authorization:
@@ -83,7 +84,7 @@ function Reports() {
 
             const logsResponse =
                 await fetch(
-                    "https://visitorpass-backend.onrender.com/api/checklogs",
+                    apiUrl("/api/checklogs"),
                     {
                         headers: {
                             Authorization:
@@ -116,6 +117,8 @@ function Reports() {
 
     useEffect(() => {
 
+        // State is updated after the asynchronous API request completes.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchReports();
 
     }, []);
@@ -1283,7 +1286,7 @@ function Reports() {
 
                                                     <img
                                                         src={
-                                                            `https://visitorpass-backend.onrender.com${visitor.photo}`
+                                                            `${API_BASE_URL}${visitor.photo}`
                                                         }
                                                         alt={
                                                             visitor.name

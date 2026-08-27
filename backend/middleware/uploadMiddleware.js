@@ -1,9 +1,15 @@
 const multer = require("multer");
 const path = require("path");
+const fs = require("fs");
+
+const uploadsDirectory = path.join(__dirname, "..", "uploads");
+
+// The directory is ignored by Git, so create it for fresh deployments.
+fs.mkdirSync(uploadsDirectory, { recursive: true });
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, "uploads/");
+        cb(null, uploadsDirectory);
     },
 
     filename: (req, file, cb) => {

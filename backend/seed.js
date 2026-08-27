@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 require("dotenv").config();
 
-const User = require("./models/User");
+const User = require("./models/user");
 const Visitor = require("./models/Visitor");
 const Appointment = require("./models/Appointment");
 const Pass = require("./models/pass");
@@ -76,6 +76,7 @@ const seedDatabase = async () => {
         const appointments = await Appointment.create([
             {
                 visitor: visitors[0].name,
+                visitorEmail: visitors[0].email,
                 host: "Employee User",
                 date: "2026-08-26",
                 time: "10:00",
@@ -84,6 +85,7 @@ const seedDatabase = async () => {
             },
             {
                 visitor: visitors[1].name,
+                visitorEmail: visitors[1].email,
                 host: "Employee User",
                 date: "2026-08-27",
                 time: "11:00",
@@ -92,6 +94,7 @@ const seedDatabase = async () => {
             },
             {
                 visitor: visitors[2].name,
+                visitorEmail: visitors[2].email,
                 host: "Employee User",
                 date: "2026-08-28",
                 time: "14:00",

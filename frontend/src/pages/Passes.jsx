@@ -1,5 +1,6 @@
 import "../style/passes.css";
 import { useEffect, useState } from "react";
+import { apiUrl } from "../config/api";
 
 function Passes() {
     const [appointments, setAppointments] = useState([]);
@@ -11,7 +12,7 @@ function Passes() {
             const token = localStorage.getItem("token");
 
             const response = await fetch(
-                "https://visitorpass-backend.onrender.com/api/appointments",
+                apiUrl("/api/appointments"),
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -30,6 +31,8 @@ function Passes() {
     };
 
     useEffect(() => {
+        // State is updated after the asynchronous API request completes.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchAppointments();
     }, []);
 
@@ -56,7 +59,7 @@ function Passes() {
         }
 
         const response = await fetch(
-            "https://visitorpass-backend.onrender.com/api/passes",
+            apiUrl("/api/passes"),
             {
                 method: "POST",
                 headers: {
@@ -64,18 +67,7 @@ function Passes() {
                     Authorization: `Bearer ${token}`
                 },
                 body: JSON.stringify({
-                    visitor: appointment.visitor,
-
-                    appointment:
-                        `${appointment.purpose} with ${appointment.host}`,
-
-                    host: appointment.host,
-
-                    purpose: appointment.purpose,
-
-                    date: appointment.date,
-
-                    time: appointment.time,
+                    appointmentId: appointment._id,
 
                     validFrom: form.validFrom,
 
@@ -119,7 +111,7 @@ function Passes() {
             const token = localStorage.getItem("token");
 
             const response = await fetch(
-                "https://visitorpass-backend.onrender.com/api/pdf",
+                apiUrl("/api/pdf"),
                 {
                     method: "POST",
                     headers: {

@@ -1,6 +1,7 @@
 import "../style/login.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { apiUrl } from "../config/api";
 
 function Login() {
     const [email, setEmail] = useState("");
@@ -18,7 +19,7 @@ function Login() {
 
         try {
             const response = await fetch(
-                "https://visitorpass-backend.onrender.com/api/users/login",
+                apiUrl("/api/users/login"),
                 {
                     method: "POST",
                     headers: {
@@ -40,7 +41,7 @@ function Login() {
                 setError(data.message || "Invalid email or password");
             }
 
-        } catch (error) {
+        } catch {
             setError("Server error. Please try again.");
         } finally {
             setLoading(false);

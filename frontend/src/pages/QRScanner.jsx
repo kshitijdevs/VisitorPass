@@ -1,6 +1,7 @@
 import "../style/qrscanner.css";
 import { useEffect, useRef, useState } from "react";
 import { Html5Qrcode } from "html5-qrcode";
+import { API_BASE_URL, apiUrl } from "../config/api";
 
 function QRScanner() {
     const [message, setMessage] = useState("");
@@ -104,10 +105,7 @@ function QRScanner() {
                             }
 
 
-                            if (
-                                !qrData.visitor ||
-                                !qrData.passNumber
-                            ) {
+                            if (!qrData.passNumber) {
                                 throw new Error(
                                     "Invalid visitor pass"
                                 );
@@ -128,110 +126,6 @@ function QRScanner() {
 
 
                             // ==================================
-                            // GET VISITORS
-                            // ==================================
-
-                            const visitorResponse =
-                                await fetch(
-                                    "https://visitorpass-backend.onrender.com/api/visitors",
-                                    {
-                                        headers: {
-                                            Authorization:
-                                                `Bearer ${token}`
-                                        }
-                                    }
-                                );
-
-
-                            const visitorData =
-                                await visitorResponse.json();
-
-
-                            if (!visitorResponse.ok) {
-                                throw new Error(
-                                    visitorData.message ||
-                                    "Unable to load visitors"
-                                );
-                            }
-
-
-                            // Handle:
-                            //
-                            // [ visitor1, visitor2 ]
-                            //
-                            // OR
-                            //
-                            // { visitors: [...] }
-
-                            const visitors =
-                                Array.isArray(
-                                    visitorData
-                                )
-                                    ? visitorData
-                                    : Array.isArray(
-                                        visitorData.visitors
-                                    )
-                                        ? visitorData.visitors
-                                        : [];
-
-
-                            // ==================================
-                            // FIND VISITOR
-                            // ==================================
-
-                            const visitor =
-                                visitors.find(
-                                    (item) =>
-                                        item.name
-                                            ?.trim()
-                                            .toLowerCase() ===
-                                        qrData.visitor
-                                            ?.trim()
-                                            .toLowerCase()
-                                );
-
-
-                            if (!visitor) {
-
-                                setVisitorInfo(null);
-
-                                throw new Error(
-                                    "Visitor not found"
-                                );
-                            }
-
-
-                            // ==================================
-                            // SHOW VISITOR
-                            // ==================================
-
-                            setVisitorInfo({
-
-                                name:
-                                    visitor.name,
-
-                                email:
-                                    visitor.email,
-
-                                phone:
-                                    visitor.phone,
-
-                                company:
-                                    visitor.company,
-
-                                purpose:
-                                    visitor.purpose,
-
-                                photo:
-                                    visitor.photo,
-
-                                passNumber:
-                                    qrData.passNumber
-
-                            });
-
-
-                            // ==================================
                             // CHECK-IN / CHECK-OUT
                             // ==================================
 
@@ -241,7 +135,7 @@ function QRScanner() {
 
                             const checkResponse =
                                 await fetch(
-                                    "https://visitorpass-backend.onrender.com/api/checklogs",
+                                    apiUrl("/api/checklogs"),
                                     {
                                         method: "POST",
 
@@ -255,9 +149,6 @@ function QRScanner() {
 
                                         body:
                                             JSON.stringify({
-
-                                                visitor:
-                                                    qrData.visitor,
 
                                                 passNumber:
                                                     qrData.passNumber,
@@ -287,6 +178,14 @@ function QRScanner() {
 
                                 return;
                             }
+
+                            // Visitor identity is returned by the backend from
+                            // the stored pass, never from the QR/client data.
+                            setVisitorInfo({
+                                name: checkData.visitor?.name || "Visitor",
+                                photo: checkData.visitor?.photo || "",
+                                passNumber: qrData.passNumber
+                            });
 
 
                             // ==================================
@@ -357,11 +256,15 @@ function QRScanner() {
 
                     try {
                         await scanner.stop();
-                    } catch { }
+                    } catch {
+                        // The scanner may already be stopped during cleanup.
+                    }
 
                     try {
                         scanner.clear();
-                    } catch { }
+                    } catch {
+                        // The scanner may already be cleared during cleanup.
+                    }
 
                     return;
                 }
@@ -424,7 +327,9 @@ function QRScanner() {
 
                         try {
                             currentScanner.clear();
-                        } catch { }
+                        } catch {
+                            // The scanner DOM can already be removed.
+                        }
 
                         const reader =
                             document.getElementById(
@@ -688,7 +593,7 @@ function QRScanner() {
 
                                 <img
                                     src={
-                                        `https://visitorpass-backend.onrender.com${visitorInfo.photo}`
+                                        `${API_BASE_URL}${visitorInfo.photo}`
                                     }
                                     alt={
                                         visitorInfo.name

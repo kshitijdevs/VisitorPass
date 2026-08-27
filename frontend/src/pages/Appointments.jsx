@@ -1,5 +1,6 @@
 import "../style/appointments.css";
 import { useEffect, useState } from "react";
+import { API_BASE_URL, apiUrl } from "../config/api";
 
 function Appointments() {
     const [appointments, setAppointments] = useState([]);
@@ -16,7 +17,7 @@ function Appointments() {
             const token = localStorage.getItem("token");
 
             const response = await fetch(
-                "https://visitorpass-backend.onrender.com/api/appointments",
+                apiUrl("/api/appointments"),
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -39,7 +40,7 @@ function Appointments() {
             const token = localStorage.getItem("token");
 
             const response = await fetch(
-                "https://visitorpass-backend.onrender.com/api/visitors",
+                apiUrl("/api/visitors"),
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -58,6 +59,8 @@ function Appointments() {
     };
 
     useEffect(() => {
+        // These functions update state after their asynchronous API requests.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchAppointments();
         fetchVisitors();
     }, []);
@@ -79,7 +82,7 @@ function Appointments() {
         }
 
         const response = await fetch(
-            "https://visitorpass-backend.onrender.com/api/appointments",
+            apiUrl("/api/appointments"),
             {
                 method: "POST",
                 headers: {
@@ -118,7 +121,7 @@ function Appointments() {
         const token = localStorage.getItem("token");
 
         const response = await fetch(
-            `https://visitorpass-backend.onrender.com/api/appointments/${id}/status`,
+            apiUrl(`/api/appointments/${id}/status`),
             {
                 method: "PATCH",
                 headers: {
@@ -409,7 +412,7 @@ function Appointments() {
                                                     {visitorData?.photo ? (
 
                                                         <img
-                                                            src={`https://visitorpass-backend.onrender.com${visitorData.photo}`}
+                                                            src={`${API_BASE_URL}${visitorData.photo}`}
                                                             alt={
                                                                 appointment.visitor
                                                             }

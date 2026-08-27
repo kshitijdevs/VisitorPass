@@ -1,10 +1,24 @@
 import "../style/dashboard.css";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { API_BASE_URL, apiUrl } from "../config/api";
 
 function Dashboard() {
 
-    const [role, setRole] = useState("");
+    const [role] = useState(() => {
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+            return "";
+        }
+
+        try {
+            return JSON.parse(atob(token.split(".")[1])).role || "";
+        } catch (error) {
+            console.error("Could not read user role:", error);
+            return "";
+        }
+    });
 
     const [stats, setStats] = useState({
         totalVisitors: 0,
@@ -13,35 +27,6 @@ function Dashboard() {
         totalAppointments: 0,
         recentVisitors: []
     });
-
-
-    // ==========================================
-    // GET USER ROLE FROM JWT
-    // ==========================================
-
-    useEffect(() => {
-
-        const token = localStorage.getItem("token");
-
-        if (!token) return;
-
-        try {
-
-            const payload = JSON.parse(
-                atob(token.split(".")[1])
-            );
-
-            setRole(payload.role);
-
-        } catch (error) {
-
-            console.error(
-                "Could not read user role:",
-                error
-            );
-        }
-
-    }, []);
 
 
     // ==========================================
@@ -58,7 +43,7 @@ function Dashboard() {
                     localStorage.getItem("token");
 
                 const response = await fetch(
-                    "https://visitorpass-backend.onrender.com/api/dashboard",
+                    apiUrl("/api/dashboard"),
                     {
                         headers: {
                             Authorization:
@@ -760,7 +745,7 @@ function Dashboard() {
                                                         {visitor.photo ? (
 
                                                             <img
-                                                                src={`https://visitorpass-backend.onrender.com${visitor.photo}`}
+                                                                src={`${API_BASE_URL}${visitor.photo}`}
                                                                 alt={visitor.name}
                                                             />
 

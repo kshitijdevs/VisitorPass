@@ -4,14 +4,37 @@ const User = require("../models/user");
 
 const createUser = async (req, res) => {
     try {
-        const hashedPassword = await bcrypt.hash(req.body.password, 10);
+        const { name, email, password } = req.body;
 
-const user = await User.create({
-    ...req.body,
-    password: hashedPassword
-});
+        if (!name || !email || !password) {
+            return res.status(400).json({
+                message: "Name, email and password are required"
+            });
+        }
 
-        res.status(201).json(user);
+        const normalizedEmail = email.trim().toLowerCase();
+        const existingUser = await User.findOne({ email: normalizedEmail });
+
+        if (existingUser) {
+            return res.status(409).json({
+                message: "A user with this email already exists"
+            });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const user = await User.create({
+            name: name.trim(),
+            email: normalizedEmail,
+            password: hashedPassword,
+            role: "employee"
+        });
+
+        res.status(201).json({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role
+        });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

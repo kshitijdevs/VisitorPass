@@ -1,5 +1,6 @@
 import "../style/Visitors.css";
 import { useEffect, useState } from "react";
+import { API_BASE_URL, apiUrl } from "../config/api";
 
 function Visitors() {
     const [visitors, setVisitors] = useState([]);
@@ -17,7 +18,7 @@ function Visitors() {
             const token = localStorage.getItem("token");
 
             const response = await fetch(
-                "https://visitorpass-backend.onrender.com/api/visitors",
+                apiUrl("/api/visitors"),
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -36,6 +37,8 @@ function Visitors() {
     };
 
     useEffect(() => {
+        // State is updated after the asynchronous API request completes.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchVisitors();
     }, []);
 
@@ -58,7 +61,7 @@ function Visitors() {
 
         try {
             const response = await fetch(
-                "https://visitorpass-backend.onrender.com/api/visitors",
+                apiUrl("/api/visitors"),
                 {
                     method: "POST",
                     headers: {
@@ -393,7 +396,7 @@ function Visitors() {
                                                 {visitor.photo ? (
 
                                                     <img
-                                                        src={`https://visitorpass-backend.onrender.com${visitor.photo}`}
+                                                        src={`${API_BASE_URL}${visitor.photo}`}
                                                         alt={visitor.name}
                                                     />
 

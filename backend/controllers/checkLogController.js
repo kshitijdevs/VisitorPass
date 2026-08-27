@@ -8,14 +8,13 @@ const Pass = require("../models/pass");
 const createCheckLog = async (req, res) => {
     try {
         const {
-            visitor,
             passNumber,
             action
         } = req.body;
 
-        if (!visitor || !passNumber || !action) {
+        if (!passNumber || !action) {
             return res.status(400).json({
-                message: "Visitor, pass number and action are required"
+                message: "Pass number and action are required"
             });
         }
 
@@ -40,10 +39,12 @@ const createCheckLog = async (req, res) => {
 
         const now = new Date();
 
-        if (
+        // A visitor already inside must always be able to check out. The
+        // validity window applies only when starting a new visit.
+        if (action === "check-in" && (
             now < new Date(pass.validFrom) ||
             now > new Date(pass.validUntil)
-        ) {
+        )) {
             return res.status(403).json({
                 message: "Pass is not valid at this time"
             });
@@ -78,12 +79,18 @@ const createCheckLog = async (req, res) => {
         }
 
         const checkLog = await CheckLog.create({
-            visitor,
+            visitor: pass.visitor,
             passNumber,
             action
         });
 
-        res.status(201).json(checkLog);
+        res.status(201).json({
+            ...checkLog.toObject(),
+            visitor: {
+                name: pass.visitor,
+                photo: pass.visitorPhoto || ""
+            }
+        });
 
     } catch (error) {
         console.error(

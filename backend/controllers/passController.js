@@ -1,6 +1,8 @@
 const QRCode = require("qrcode");
+const mongoose = require("mongoose");
 const Pass = require("../models/pass");
 const Visitor = require("../models/Visitor");
+const Appointment = require("../models/Appointment");
 
 const {
     createPassPDF
@@ -13,6 +15,56 @@ const {
 
 const createPass = async (req, res) => {
     try {
+
+        const { appointmentId, validFrom, validUntil } = req.body;
+
+        if (!appointmentId || !validFrom || !validUntil) {
+            return res.status(400).json({
+                message: "Appointment, valid from and valid until are required"
+            });
+        }
+
+        if (!mongoose.isValidObjectId(appointmentId)) {
+            return res.status(400).json({ message: "Invalid appointment" });
+        }
+
+        const start = new Date(validFrom);
+        const end = new Date(validUntil);
+
+        if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || start >= end) {
+            return res.status(400).json({
+                message: "Valid until must be later than valid from"
+            });
+        }
+
+        const appointment = await Appointment.findById(appointmentId);
+
+        if (!appointment) {
+            return res.status(404).json({ message: "Appointment not found" });
+        }
+
+        if (appointment.status !== "approved") {
+            return res.status(400).json({
+                message: "Only approved appointments can receive passes"
+            });
+        }
+
+        const existingPass = await Pass.findOne({ appointmentId });
+
+        if (existingPass) {
+            return res.status(409).json({
+                message: "A pass has already been issued for this appointment"
+            });
+        }
+
+        const visitor = await Visitor.findOne({
+            name: appointment.visitor,
+            email: appointment.visitorEmail
+        });
+
+        if (!visitor) {
+            return res.status(404).json({ message: "Visitor not found" });
+        }
 
         // Find the highest existing pass number
         const passes = await Pass.find(
@@ -47,7 +99,6 @@ const createPass = async (req, res) => {
 
         // Generate QR code
         const qrData = JSON.stringify({
-            visitor: req.body.visitor,
             passNumber: passNumber
         });
 
@@ -59,37 +110,39 @@ const createPass = async (req, res) => {
         const pass = await Pass.create({
 
             visitor:
-                req.body.visitor,
+                appointment.visitor,
 
             visitorPhoto:
-                req.body.visitorPhoto || "",
+                visitor.photo || "",
 
             appointment:
-                req.body.appointment,
+                `${appointment.purpose} with ${appointment.host}`,
+
+            appointmentId,
 
             host:
-                req.body.host || "",
+                appointment.host,
 
             purpose:
-                req.body.purpose || "",
+                appointment.purpose,
 
             date:
-                req.body.date || "",
+                appointment.date,
 
             time:
-                req.body.time || "",
+                appointment.time,
 
             // Automatically generated
             passNumber: passNumber,
 
             validFrom:
-                req.body.validFrom,
+                start,
 
             validUntil:
-                req.body.validUntil,
+                end,
 
             status:
-                req.body.status || "active",
+                "active",
 
             qrCode: qrCode
         });
@@ -98,13 +151,6 @@ const createPass = async (req, res) => {
         // Generate PDF
         const pdfBuffer =
             await createPassPDF(pass);
-
-
-        // Find visitor
-        const visitor =
-            await Visitor.findOne({
-                name: pass.visitor
-            });
 
 
         // Email PDF
@@ -142,6 +188,12 @@ const createPass = async (req, res) => {
         res.status(201).json(pass);
 
     } catch (error) {
+
+        if (error.code === 11000) {
+            return res.status(409).json({
+                message: "A pass has already been issued for this appointment"
+            });
+        }
 
         console.error(
             "CREATE PASS ERROR:",

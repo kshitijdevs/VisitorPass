@@ -12,7 +12,7 @@ function Navbar() {
         try {
             const decoded = jwtDecode(token);
             role = decoded.role;
-        } catch (error) {
+        } catch {
             console.error("Invalid token");
         }
     }
