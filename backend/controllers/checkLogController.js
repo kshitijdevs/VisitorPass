@@ -37,6 +37,12 @@ const createCheckLog = async (req, res) => {
             });
         }
 
+        if (pass.status === "revoked") {
+            return res.status(403).json({
+                message: "Pass has been revoked"
+            });
+        }
+
         const now = new Date();
 
         // A visitor already inside must always be able to check out. The

@@ -11,6 +11,8 @@ function Appointments() {
     const [date, setDate] = useState("");
     const [time, setTime] = useState("");
     const [purpose, setPurpose] = useState("");
+    const [isCreating, setIsCreating] = useState(false);
+    const [updatingAppointmentId, setUpdatingAppointmentId] = useState(null);
 
     const fetchAppointments = async () => {
         try {
@@ -68,6 +70,10 @@ function Appointments() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        if (isCreating) {
+            return;
+        }
+
         const token = localStorage.getItem("token");
 
         // Find the selected visitor
@@ -81,72 +87,93 @@ function Appointments() {
             return;
         }
 
-        const response = await fetch(
-            apiUrl("/api/appointments"),
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    visitor: selectedVisitor.name,
-                    visitorEmail: selectedVisitor.email,
-                    host,
-                    date,
-                    time,
-                    purpose
-                })
+        setIsCreating(true);
+
+        try {
+            const response = await fetch(
+                apiUrl("/api/appointments"),
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        visitor: selectedVisitor.name,
+                        visitorEmail: selectedVisitor.email,
+                        host,
+                        date,
+                        time,
+                        purpose
+                    })
+                }
+            );
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert("Appointment created successfully!");
+
+                setVisitor("");
+                setHost("");
+                setDate("");
+                setTime("");
+                setPurpose("");
+
+                fetchAppointments();
+            } else {
+                alert(data.message || "Something went wrong");
             }
-        );
-
-        const data = await response.json();
-
-        if (response.ok) {
-            alert("Appointment created successfully!");
-
-            setVisitor("");
-            setHost("");
-            setDate("");
-            setTime("");
-            setPurpose("");
-
-            fetchAppointments();
-        } else {
-            alert(data.message || "Something went wrong");
+        } catch (error) {
+            console.error(error);
+            alert("Unable to create appointment");
+        } finally {
+            setIsCreating(false);
         }
     };
 
     const updateStatus = async (id, status) => {
+        if (updatingAppointmentId) {
+            return;
+        }
+
         const token = localStorage.getItem("token");
+        setUpdatingAppointmentId(id);
 
-        const response = await fetch(
-            apiUrl(`/api/appointments/${id}/status`),
-            {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    status
-                })
-            }
-        );
-
-        const data = await response.json();
-
-        if (response.ok) {
-            alert(`Appointment ${status}!`);
-            setAppointments((currentAppointments) =>
-                currentAppointments.map((appointment) =>
-                    appointment._id === data._id
-                        ? data
-                        : appointment
-                )
+        try {
+            const response = await fetch(
+                apiUrl(`/api/appointments/${id}/status`),
+                {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        status
+                    })
+                }
             );
-        } else {
-            alert(data.message || "Unable to update appointment");
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert(`Appointment ${status}!`);
+                setAppointments((currentAppointments) =>
+                    currentAppointments.map((appointment) =>
+                        appointment._id === data._id
+                            ? data
+                            : appointment
+                    )
+                );
+            } else {
+                alert(data.message || "Unable to update appointment");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Unable to update appointment");
+        } finally {
+            setUpdatingAppointmentId(null);
         }
     };
 
@@ -316,8 +343,11 @@ function Appointments() {
                         <button
                             type="submit"
                             className="appointment-submit-btn"
+                            disabled={isCreating}
                         >
-                            Create Appointment
+                            {isCreating
+                                ? "Creating Appointment..."
+                                : "Create Appointment"}
                         </button>
 
                     </div>
@@ -504,6 +534,10 @@ function Appointments() {
 
                                                         <button
                                                             className="appointment-approve"
+                                                            disabled={
+                                                                updatingAppointmentId ===
+                                                                appointment._id
+                                                            }
                                                             onClick={() =>
                                                                 updateStatus(
                                                                     appointment._id,
@@ -511,11 +545,18 @@ function Appointments() {
                                                                 )
                                                             }
                                                         >
-                                                            Approve
+                                                            {updatingAppointmentId ===
+                                                            appointment._id
+                                                                ? "Updating..."
+                                                                : "Approve"}
                                                         </button>
 
                                                         <button
                                                             className="appointment-reject"
+                                                            disabled={
+                                                                updatingAppointmentId ===
+                                                                appointment._id
+                                                            }
                                                             onClick={() =>
                                                                 updateStatus(
                                                                     appointment._id,
@@ -523,7 +564,10 @@ function Appointments() {
                                                                 )
                                                             }
                                                         >
-                                                            Reject
+                                                            {updatingAppointmentId ===
+                                                            appointment._id
+                                                                ? "Updating..."
+                                                                : "Reject"}
                                                         </button>
 
                                                     </div>

@@ -1,5 +1,6 @@
 import "../style/passes.css";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { jwtDecode } from "jwt-decode";
 import { apiUrl } from "../config/api";
 
 function Passes() {
@@ -7,6 +8,21 @@ function Passes() {
     const [passes, setPasses] = useState([]);
     const [createdPass, setCreatedPass] = useState(null);
     const [passForms, setPassForms] = useState({});
+    const [issuingAppointmentId, setIssuingAppointmentId] = useState(null);
+    const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
+    const [passMessage, setPassMessage] = useState(null);
+    const [revokingPassId, setRevokingPassId] = useState(null);
+    const [isRevokingAll, setIsRevokingAll] = useState(false);
+    const issuingAppointmentIdRef = useRef(null);
+
+    let isAdmin = false;
+
+    try {
+        const token = localStorage.getItem("token");
+        isAdmin = token ? jwtDecode(token).role === "admin" : false;
+    } catch {
+        isAdmin = false;
+    }
 
     const fetchAppointments = async () => {
         try {
@@ -72,72 +88,94 @@ function Passes() {
     };
 
     const issuePass = async (appointment) => {
+        if (issuingAppointmentIdRef.current) {
+            return;
+        }
+
         const token = localStorage.getItem("token");
 
         const form = passForms[appointment._id];
 
         if (!form?.validFrom || !form?.validUntil) {
-            alert(
-                "Please select Valid From and Valid Until."
-            );
+            setPassMessage({
+                type: "error",
+                text: "Please select Valid From and Valid Until."
+            });
             return;
         }
 
-        const response = await fetch(
-            apiUrl("/api/passes"),
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    appointmentId: appointment._id,
+        issuingAppointmentIdRef.current = appointment._id;
+        setIssuingAppointmentId(appointment._id);
+        setPassMessage(null);
 
-                    validFrom: form.validFrom,
+        try {
+            const response = await fetch(
+                apiUrl("/api/passes"),
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        appointmentId: appointment._id,
 
-                    validUntil: form.validUntil,
+                        validFrom: form.validFrom,
 
-                    status: "active"
-                })
-            }
-        );
+                        validUntil: form.validUntil,
 
-        const data = await response.json();
-
-        if (response.ok) {
-            alert(
-                `Pass ${data.passNumber} issued successfully!`
-            );
-
-            setCreatedPass(data);
-
-            setPasses((currentPasses) => [
-                data,
-                ...currentPasses.filter(
-                    (pass) => pass.appointmentId !== data.appointmentId
-                )
-            ]);
-
-            setPassForms((prev) => ({
-                ...prev,
-                [appointment._id]: {
-                    validFrom: "",
-                    validUntil: ""
+                        status: "active"
+                    })
                 }
-            }));
-        } else {
-            alert(
-                data.message ||
-                "Something went wrong"
             );
+
+            const data = await response.json();
+
+            if (response.ok) {
+                setCreatedPass(data);
+                setPassMessage({
+                    type: "success",
+                    text: `Pass ${data.passNumber} issued successfully.`
+                });
+
+                setPasses((currentPasses) => [
+                    data,
+                    ...currentPasses.filter(
+                        (pass) => pass.appointmentId !== data.appointmentId
+                    )
+                ]);
+
+                setPassForms((prev) => ({
+                    ...prev,
+                    [appointment._id]: {
+                        validFrom: "",
+                        validUntil: ""
+                    }
+                }));
+            } else {
+                setPassMessage({
+                    type: "error",
+                    text: data.message || "Pass was not issued. Please try again."
+                });
+            }
+        } catch (error) {
+            console.error(error);
+            setPassMessage({
+                type: "error",
+                text: "Pass was not issued. Please try again."
+            });
+        } finally {
+            issuingAppointmentIdRef.current = null;
+            setIssuingAppointmentId(null);
         }
     };
 
     const downloadPDF = async () => {
-        if (!createdPass) {
+        if (!createdPass || isDownloadingPdf) {
             return;
         }
+
+        setIsDownloadingPdf(true);
 
         try {
             const token = localStorage.getItem("token");
@@ -195,6 +233,147 @@ function Passes() {
             alert(
                 "Unable to generate PDF"
             );
+        } finally {
+            setIsDownloadingPdf(false);
+        }
+    };
+
+    const revokePass = async (pass) => {
+        if (
+            pass.status === "revoked" ||
+            revokingPassId ||
+            !window.confirm(
+                `Revoke pass ${pass.passNumber}? It will no longer be valid for check-in or check-out.`
+            )
+        ) {
+            return;
+        }
+
+        setRevokingPassId(pass._id);
+
+        try {
+            const token = localStorage.getItem("token");
+
+            const response = await fetch(
+                apiUrl(`/api/passes/${pass._id}/revoke`),
+                {
+                    method: "PATCH",
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            const data = await response.json();
+
+            if (response.ok) {
+                setPasses((currentPasses) =>
+                    currentPasses.map((currentPass) =>
+                        currentPass._id === data._id
+                            ? data
+                            : currentPass
+                    )
+                );
+
+                setCreatedPass((currentPass) =>
+                    currentPass?._id === data._id
+                        ? data
+                        : currentPass
+                );
+
+                setPassMessage({
+                    type: "success",
+                    text: `Pass ${data.passNumber} has been revoked.`
+                });
+            } else {
+                setPassMessage({
+                    type: "error",
+                    text: data.message || "Pass could not be revoked."
+                });
+            }
+        } catch (error) {
+            console.error(error);
+            setPassMessage({
+                type: "error",
+                text: "Pass could not be revoked. Please try again."
+            });
+        } finally {
+            setRevokingPassId(null);
+        }
+    };
+
+    const revokeAllActivePasses = async () => {
+        const activePasses = passes.filter(
+            (pass) => pass.status === "active"
+        );
+
+        if (activePasses.length === 0) {
+            setPassMessage({
+                type: "info",
+                text: "There are no active passes to revoke."
+            });
+            return;
+        }
+
+        if (
+            isRevokingAll ||
+            !window.confirm(
+                `Revoke all ${activePasses.length} active pass(es)? They will no longer be valid for security scans.`
+            )
+        ) {
+            return;
+        }
+
+        setIsRevokingAll(true);
+
+        try {
+            const token = localStorage.getItem("token");
+
+            const response = await fetch(
+                apiUrl("/api/passes/revoke-all"),
+                {
+                    method: "PATCH",
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            const data = await response.json();
+
+            if (response.ok) {
+                setPasses((currentPasses) =>
+                    currentPasses.map((pass) =>
+                        pass.status === "active"
+                            ? { ...pass, status: "revoked" }
+                            : pass
+                    )
+                );
+
+                setCreatedPass((currentPass) =>
+                    currentPass?.status === "active"
+                        ? { ...currentPass, status: "revoked" }
+                        : currentPass
+                );
+
+                setPassMessage({
+                    type: "success",
+                    text: data.message
+                });
+            } else {
+                setPassMessage({
+                    type: "error",
+                    text: data.message || "Active passes could not be revoked."
+                });
+            }
+        } catch (error) {
+            console.error(error);
+            setPassMessage({
+                type: "error",
+                text: "Active passes could not be revoked. Please try again."
+            });
+        } finally {
+            setIsRevokingAll(false);
         }
     };
 
@@ -262,6 +441,16 @@ function Passes() {
                 </div>
 
 
+                {passMessage && (
+                    <div
+                        className={`passes-feedback ${passMessage.type}`}
+                        role="status"
+                    >
+                        {passMessage.text}
+                    </div>
+                )}
+
+
                 {approvedAppointments.length === 0 ? (
 
                     <div className="passes-empty">
@@ -293,6 +482,10 @@ function Passes() {
                                     passForms[
                                     appointment._id
                                     ] || {};
+
+                                const isIssuing =
+                                    issuingAppointmentId ===
+                                    appointment._id;
 
                                 return (
                                     <div
@@ -429,6 +622,7 @@ function Passes() {
 
                                                     <input
                                                         type="datetime-local"
+                                                        disabled={isIssuing}
                                                         value={
                                                             form.validFrom ||
                                                             ""
@@ -453,6 +647,7 @@ function Passes() {
 
                                                     <input
                                                         type="datetime-local"
+                                                        disabled={isIssuing}
                                                         value={
                                                             form.validUntil ||
                                                             ""
@@ -473,13 +668,16 @@ function Passes() {
 
                                             <button
                                                 className="issue-pass-btn"
+                                                disabled={isIssuing}
                                                 onClick={() =>
                                                     issuePass(
                                                         appointment
                                                     )
                                                 }
                                             >
-                                                Issue Visitor Pass
+                                                {isIssuing
+                                                    ? "Issuing Pass..."
+                                                    : "Issue Visitor Pass"}
                                             </button>
 
                                         </div>
@@ -652,8 +850,11 @@ function Passes() {
                             <button
                                 className="download-pdf-btn"
                                 onClick={downloadPDF}
+                                disabled={isDownloadingPdf}
                             >
-                                ↓ Download Visitor Pass PDF
+                                {isDownloadingPdf
+                                    ? "Preparing PDF..."
+                                    : "↓ Download Visitor Pass PDF"}
                             </button>
 
                         </div>
@@ -684,6 +885,109 @@ function Passes() {
                             </div>
 
                         )}
+
+                    </div>
+
+                </section>
+
+            )}
+
+
+            {passes.length > 0 && (
+
+                <section className="passes-card issued-passes-card">
+
+                    <div className="passes-card-header">
+
+                        <h2>
+                            Issued Passes
+                        </h2>
+
+                        <p>
+                            Revoke a pass to preserve its history while
+                            preventing future security scans.
+                        </p>
+
+                        {isAdmin && (
+                            <button
+                                className="revoke-all-passes-btn"
+                                disabled={isRevokingAll}
+                                onClick={revokeAllActivePasses}
+                            >
+                                {isRevokingAll
+                                    ? "Revoking..."
+                                    : "Revoke All Active Passes"}
+                            </button>
+                        )}
+
+                    </div>
+
+
+                    <div className="issued-passes-table-wrapper">
+
+                        <table className="issued-passes-table">
+
+                            <thead>
+
+                                <tr>
+                                    <th>Pass</th>
+                                    <th>Visitor</th>
+                                    <th>Appointment</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {passes.map((pass) => (
+
+                                    <tr key={pass._id}>
+
+                                        <td>{pass.passNumber}</td>
+                                        <td>{pass.visitor}</td>
+                                        <td>{pass.appointment}</td>
+
+                                        <td>
+                                            <span
+                                                className={
+                                                    `pass-status ${pass.status}`
+                                                }
+                                            >
+                                                {pass.status}
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            {pass.status === "revoked" ? (
+                                                <span className="pass-revoked-label">
+                                                    Revoked
+                                                </span>
+                                            ) : (
+                                                <button
+                                                    className="revoke-pass-btn"
+                                                    disabled={
+                                                        revokingPassId ===
+                                                        pass._id
+                                                    }
+                                                    onClick={() => revokePass(pass)}
+                                                >
+                                                    {revokingPassId === pass._id
+                                                        ? "Revoking..."
+                                                        : "Revoke Pass"}
+                                                </button>
+                                            )}
+                                        </td>
+
+                                    </tr>
+
+                                ))}
+
+                            </tbody>
+
+                        </table>
 
                     </div>
 

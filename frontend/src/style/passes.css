@@ -403,6 +403,115 @@
     background: #1d4ed8;
 }
 
+.issue-pass-btn:disabled,
+.download-pdf-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.passes-feedback {
+    margin: 0 24px 20px;
+    padding: 12px 14px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.passes-feedback.success {
+    background: #ecfdf5;
+    color: #047857;
+}
+
+.passes-feedback.error {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+.passes-feedback.info {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.issued-passes-card {
+    margin-top: 22px;
+}
+
+.issued-passes-table-wrapper {
+    overflow-x: auto;
+}
+
+.issued-passes-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.issued-passes-table th,
+.issued-passes-table td {
+    padding: 12px;
+    border-bottom: 1px solid #edf1f5;
+    text-align: left;
+}
+
+.issued-passes-table th {
+    color: #64748b;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.pass-status,
+.pass-revoked-label {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+.pass-status.active {
+    background: #ecfdf5;
+    color: #047857;
+}
+
+.pass-status.revoked,
+.pass-revoked-label {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+.revoke-pass-btn {
+    padding: 7px 10px;
+    border: 1px solid #fecaca;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #b91c1c;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.revoke-pass-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.revoke-all-passes-btn {
+    margin-top: 14px;
+    padding: 8px 11px;
+    border: 1px solid #fecaca;
+    border-radius: 6px;
+    background: #fff7f7;
+    color: #b91c1c;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.revoke-all-passes-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
 
 /* =========================================
    EMPTY STATE

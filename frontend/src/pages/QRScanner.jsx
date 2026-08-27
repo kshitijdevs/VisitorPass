@@ -9,6 +9,7 @@ function QRScanner() {
     const [action, setAction] = useState("check-in");
     const [visitorInfo, setVisitorInfo] = useState(null);
     const [cameraActive, setCameraActive] = useState(false);
+    const [isProcessing, setIsProcessing] = useState(false);
 
     const scannerRef = useRef(null);
     const actionRef = useRef("check-in");
@@ -84,6 +85,7 @@ function QRScanner() {
                         }
 
                         processingRef.current = true;
+                        setIsProcessing(true);
 
                         try {
 
@@ -132,6 +134,10 @@ function QRScanner() {
                             const currentAction =
                                 actionRef.current;
 
+                            setMessage(
+                                `Processing ${currentAction}...`
+                            );
+                            setMessageType("");
 
                             const checkResponse =
                                 await fetch(
@@ -239,6 +245,8 @@ function QRScanner() {
 
                                 processingRef.current =
                                     false;
+
+                                setIsProcessing(false);
 
                             }, 3000);
 
@@ -467,6 +475,7 @@ function QRScanner() {
 
                         <button
                             type="button"
+                            disabled={isProcessing}
                             className={
                                 `qr-action-btn ${action ===
                                     "check-in"
@@ -484,6 +493,7 @@ function QRScanner() {
 
                         <button
                             type="button"
+                            disabled={isProcessing}
                             className={
                                 `qr-action-btn ${action ===
                                     "check-out"

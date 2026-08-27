@@ -26,6 +26,55 @@ const getPasses = async (req, res) => {
     }
 };
 
+const revokePass = async (req, res) => {
+    try {
+        if (!mongoose.isValidObjectId(req.params.id)) {
+            return res.status(400).json({ message: "Invalid pass" });
+        }
+
+        const pass = await Pass.findById(req.params.id);
+
+        if (!pass) {
+            return res.status(404).json({ message: "Pass not found" });
+        }
+
+        if (pass.status === "revoked") {
+            return res.status(400).json({ message: "Pass is already revoked" });
+        }
+
+        pass.status = "revoked";
+        await pass.save();
+
+        res.json(pass);
+    } catch (error) {
+        console.error("REVOKE PASS ERROR:", error);
+
+        res.status(500).json({
+            message: error.message
+        });
+    }
+};
+
+const revokeAllActivePasses = async (req, res) => {
+    try {
+        const result = await Pass.updateMany(
+            { status: "active" },
+            { status: "revoked" }
+        );
+
+        res.json({
+            message: `${result.modifiedCount} active pass(es) revoked`,
+            revokedCount: result.modifiedCount
+        });
+    } catch (error) {
+        console.error("REVOKE ALL PASSES ERROR:", error);
+
+        res.status(500).json({
+            message: error.message
+        });
+    }
+};
+
 const createPass = async (req, res) => {
     try {
 
@@ -222,5 +271,7 @@ const createPass = async (req, res) => {
 
 module.exports = {
     getPasses,
+    revokePass,
+    revokeAllActivePasses,
     createPass
 };

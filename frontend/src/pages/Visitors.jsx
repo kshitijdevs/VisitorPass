@@ -12,6 +12,7 @@ function Visitors() {
     const [company, setCompany] = useState("");
     const [purpose, setPurpose] = useState("");
     const [photo, setPhoto] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const fetchVisitors = async () => {
         try {
@@ -45,6 +46,10 @@ function Visitors() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        if (isSubmitting) {
+            return;
+        }
+
         const token = localStorage.getItem("token");
 
         const formData = new FormData();
@@ -58,6 +63,8 @@ function Visitors() {
         if (photo) {
             formData.append("photo", photo);
         }
+
+        setIsSubmitting(true);
 
         try {
             const response = await fetch(
@@ -92,6 +99,8 @@ function Visitors() {
         } catch (error) {
             console.error(error);
             alert("Unable to connect to server");
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -281,8 +290,11 @@ function Visitors() {
                         <button
                             className="visitor-submit-btn"
                             type="submit"
+                            disabled={isSubmitting}
                         >
-                            Register Visitor
+                            {isSubmitting
+                                ? "Registering Visitor..."
+                                : "Register Visitor"}
                         </button>
 
                     </div>

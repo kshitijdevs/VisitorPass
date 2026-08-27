@@ -16,6 +16,7 @@ function VisitorRegister() {
 
     const [photo, setPhoto] = useState(null);
     const [message, setMessage] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleChange = (e) => {
         setForm({
@@ -26,6 +27,12 @@ function VisitorRegister() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (isSubmitting) {
+            return;
+        }
+
+        setIsSubmitting(true);
 
         try {
             const formData = new FormData();
@@ -92,6 +99,8 @@ function VisitorRegister() {
             setMessage(
                 "Unable to connect to server"
             );
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -398,8 +407,11 @@ function VisitorRegister() {
                             <button
                                 type="submit"
                                 className="visitor-submit-button"
+                                disabled={isSubmitting}
                             >
-                                Submit Registration
+                                {isSubmitting
+                                    ? "Submitting Registration..."
+                                    : "Submit Registration"}
                             </button>
 
                         </div>

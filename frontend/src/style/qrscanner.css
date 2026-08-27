@@ -609,6 +609,11 @@
     word-break: break-word;
 }
 
+.qr-action-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+
 
 /* =====================================================
    TABLET

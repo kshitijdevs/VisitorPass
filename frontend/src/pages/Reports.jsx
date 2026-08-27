@@ -1,5 +1,5 @@
 import "../style/reports.css";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { API_BASE_URL, apiUrl } from "../config/api";
 
 function Reports() {
@@ -18,6 +18,8 @@ function Reports() {
     const [purposeFilter, setPurposeFilter] = useState("all");
 
     const [loading, setLoading] = useState(true);
+    const [isRefreshing, setIsRefreshing] = useState(false);
+    const refreshingRef = useRef(false);
 
 
     // ==========================================
@@ -25,6 +27,13 @@ function Reports() {
     // ==========================================
 
     const fetchReports = async () => {
+        if (refreshingRef.current) {
+            return;
+        }
+
+        refreshingRef.current = true;
+        setIsRefreshing(true);
+
         try {
             setLoading(true);
 
@@ -110,6 +119,8 @@ function Reports() {
         } finally {
 
             setLoading(false);
+            refreshingRef.current = false;
+            setIsRefreshing(false);
 
         }
     };
@@ -559,8 +570,9 @@ function Reports() {
                 <button
                     className="reports-export-btn"
                     onClick={fetchReports}
+                    disabled={isRefreshing}
                 >
-                    ↻ Refresh
+                    {isRefreshing ? "Refreshing..." : "↻ Refresh"}
                 </button>
 
             </div>
