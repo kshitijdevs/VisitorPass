@@ -4,6 +4,7 @@ import { apiUrl } from "../config/api";
 
 function Passes() {
     const [appointments, setAppointments] = useState([]);
+    const [passes, setPasses] = useState([]);
     const [createdPass, setCreatedPass] = useState(null);
     const [passForms, setPassForms] = useState({});
 
@@ -30,10 +31,34 @@ function Passes() {
         }
     };
 
+    const fetchPasses = async () => {
+        try {
+            const token = localStorage.getItem("token");
+
+            const response = await fetch(
+                apiUrl("/api/passes"),
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            const data = await response.json();
+
+            if (response.ok) {
+                setPasses(data);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     useEffect(() => {
         // State is updated after the asynchronous API request completes.
         // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchAppointments();
+        fetchPasses();
     }, []);
 
     const handleChange = (appointmentId, field, value) => {
@@ -86,6 +111,13 @@ function Passes() {
             );
 
             setCreatedPass(data);
+
+            setPasses((currentPasses) => [
+                data,
+                ...currentPasses.filter(
+                    (pass) => pass.appointmentId !== data.appointmentId
+                )
+            ]);
 
             setPassForms((prev) => ({
                 ...prev,
@@ -169,7 +201,12 @@ function Passes() {
     const approvedAppointments =
         appointments.filter(
             (appointment) =>
-                appointment.status === "approved"
+                appointment.status === "approved" &&
+                !passes.some(
+                    (pass) =>
+                        String(pass.appointmentId) ===
+                        String(appointment._id)
+                )
         );
 
     return (
@@ -533,6 +570,48 @@ function Passes() {
 
                                     <strong>
                                         {createdPass.appointment}
+                                    </strong>
+
+                                </div>
+
+
+                                <div>
+
+                                    <span>
+                                        HOST
+                                    </span>
+
+                                    <strong>
+                                        {createdPass.host || "-"}
+                                    </strong>
+
+                                </div>
+
+
+                                <div>
+
+                                    <span>
+                                        DATE & TIME
+                                    </span>
+
+                                    <strong>
+                                        {createdPass.date || "-"}
+                                        {createdPass.time
+                                            ? `, ${createdPass.time}`
+                                            : ""}
+                                    </strong>
+
+                                </div>
+
+
+                                <div>
+
+                                    <span>
+                                        PURPOSE
+                                    </span>
+
+                                    <strong>
+                                        {createdPass.purpose || "-"}
                                     </strong>
 
                                 </div>

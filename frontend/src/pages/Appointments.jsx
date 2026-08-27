@@ -138,7 +138,13 @@ function Appointments() {
 
         if (response.ok) {
             alert(`Appointment ${status}!`);
-            fetchAppointments();
+            setAppointments((currentAppointments) =>
+                currentAppointments.map((appointment) =>
+                    appointment._id === data._id
+                        ? data
+                        : appointment
+                )
+            );
         } else {
             alert(data.message || "Unable to update appointment");
         }

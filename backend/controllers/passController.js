@@ -12,6 +12,19 @@ const {
     sendPassEmail
 } = require("../utils/email");
 
+const getPasses = async (req, res) => {
+    try {
+        const passes = await Pass.find().sort({ _id: -1 });
+
+        res.json(passes);
+    } catch (error) {
+        console.error("GET PASSES ERROR:", error);
+
+        res.status(500).json({
+            message: error.message
+        });
+    }
+};
 
 const createPass = async (req, res) => {
     try {
@@ -208,5 +221,6 @@ const createPass = async (req, res) => {
 
 
 module.exports = {
+    getPasses,
     createPass
 };
